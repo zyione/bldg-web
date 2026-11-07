@@ -17,17 +17,23 @@ document.body.append(entryContainer);
 const veil = document.createElement('div');
 veil.id = 'tour-veil'; veil.setAttribute('aria-hidden', 'true');
 document.body.append(veil);
-function cameraTween(position, target, duration) {
+const outgoingFrame = document.createElement('canvas');
+outgoingFrame.style.cssText = 'width:100%;height:100%;display:block';
+veil.append(outgoingFrame);
+const outgoingContext = outgoingFrame.getContext('2d');
+function cameraTween(position, target, duration, easing = 'smooth') {
   const startPosition = camera.position.clone();
   const startTarget = controls.target.clone();
+  const endPosition = new THREE.Vector3(...position);
+  const endTarget = new THREE.Vector3(...target);
   moving = false;
   return new Promise(resolve => {
     const start = performance.now();
     function tick(now) {
       const t = Math.min((now - start) / duration, 1);
-      const eased = t * t * (3 - 2 * t);
-      camera.position.lerpVectors(startPosition, new THREE.Vector3(...position), eased);
-      controls.target.lerpVectors(startTarget, new THREE.Vector3(...target), eased);
+      const eased = easing === 'in' ? t * t : easing === 'out' ? 1 - (1 - t) ** 2 : t * t * (3 - 2 * t);
+      camera.position.lerpVectors(startPosition, endPosition, eased);
+      controls.target.lerpVectors(startTarget, endTarget, eased);
       controls.update();
       if (t < 1) requestAnimationFrame(tick);
       else resolve();
@@ -39,7 +45,7 @@ async function fade(visible) {
   const opacity = visible ? '1' : '0';
   const animation = veil.animate(
     [{ opacity: getComputedStyle(veil).opacity }, { opacity }],
-    { duration: reduceMotion() ? 180 : 280, easing: 'ease-in-out', fill: 'forwards' },
+    { duration: reduceMotion() ? 240 : 420, easing: 'ease-in-out', fill: 'forwards' },
   );
   await animation.finished;
   veil.style.opacity = opacity;
@@ -143,8 +149,13 @@ async function loadView(nextMode, animate = true, entry = null) {
   status(nextMode === 'interior' ? 'Opening your space…' : 'Preparing the residence…');
   const room = property.rooms.find(item => item.id === $('#room').value) || property.rooms[0];
   const file = nextMode === 'interior' ? room.model : property.exterior;
+  let previousModel;
   try {
     const result = await loader.loadAsync(`/properties/${property.id}/${file}`);
+    if (token !== requestId) { dispose(result.scene); return; }
+    result.scene.traverse(object => { if (object.isMesh) { object.castShadow = true; object.receiveShadow = true; } });
+    // Prepare shaders before the camera starts moving, including first-time room visits.
+    await renderer.compileAsync(result.scene, camera, scene);
     if (token !== requestId) { dispose(result.scene); return; }
     if (transition) {
       transitioning = true;
@@ -159,12 +170,22 @@ async function loadView(nextMode, animate = true, entry = null) {
       windowEntries?.dispose(); windowEntries = null;
       if (!reduceMotion()) {
         const approach = entering ? windowThreshold(entry) : activeEntry.interiorEntry;
-        await cameraTween(approach.position, approach.target, 1050);
+        await cameraTween(approach.position, approach.target, 1050, 'in');
       }
-      await fade(true);
+      // Dissolve the actual outgoing view directly into the moving destination.
+      // Capture immediately after a render because the canvas drawing buffer is transient.
+      renderer.render(scene, camera);
+      outgoingFrame.width = renderer.domElement.width;
+      outgoingFrame.height = renderer.domElement.height;
+      outgoingContext.drawImage(renderer.domElement, 0, 0);
+      veil.style.opacity = '1';
     }
     windowEntries?.dispose(); windowEntries = null;
-    if (currentModel) { scene.remove(currentModel); dispose(currentModel); }
+    if (currentModel) {
+      scene.remove(currentModel);
+      if (transition) previousModel = currentModel;
+      else dispose(currentModel);
+    }
     currentModel = result.scene;
     currentModel.traverse(object => { if (object.isMesh) { object.castShadow = true; object.receiveShadow = true; } });
     scene.add(currentModel);
@@ -181,9 +202,15 @@ async function loadView(nextMode, animate = true, entry = null) {
       camera.position.fromArray(start.position); controls.target.fromArray(start.target);
       controls.minDistance = .1; controls.maxDistance = 100;
       controls.update();
-      await fade(false);
       const end = entering ? room.camera : exteriorView;
-      await cameraTween(end.position, end.target, reduceMotion() ? 1 : 950);
+      if (reduceMotion()) {
+        camera.position.fromArray(end.position); controls.target.fromArray(end.target); controls.update();
+      }
+      renderer.render(scene, camera);
+      await Promise.all([
+        fade(false),
+        reduceMotion() ? Promise.resolve() : cameraTween(end.position, end.target, 950, 'out'),
+      ]);
       controls.minDistance = mode === 'interior' ? .8 : 10;
       controls.maxDistance = mode === 'interior' ? 12 : 65;
       if (returning) { exteriorView = null; activeEntry = null; }
@@ -198,12 +225,14 @@ async function loadView(nextMode, animate = true, entry = null) {
     $('#retry').onclick = () => loadView(nextMode);
     console.error(error);
   } finally {
+    if (previousModel) dispose(previousModel);
     if (token === requestId) busy = false;
     if (token === requestId) entryContainer.querySelectorAll('button').forEach(button => { button.disabled = false; });
     if (transitioning) {
       transitioning = false; controls.enabled = true;
       document.querySelectorAll('button, select').forEach(element => { element.disabled = false; });
       document.body.classList.remove('tour-transitioning'); veil.style.opacity = '0';
+      outgoingFrame.width = outgoingFrame.height = 0;
       $('#exterior').focus({ preventScroll: true });
     }
   }

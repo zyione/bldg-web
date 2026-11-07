@@ -18,15 +18,15 @@
     "semantic_hash": ""
   },
   "src/main.js": {
-    "mtime": 1794069012.9051847,
-    "seen": 1794069050.3442104,
-    "ast_hash": "0c27bcf0f5c5a76f6f8088657bb42c6a",
+    "mtime": 1794069348.6941028,
+    "seen": 1794069380.6583064,
+    "ast_hash": "703183904d658abd8f89ff1ad6ae8e36",
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1794069048.2990801,
-    "seen": 1794069050.3442154,
-    "ast_hash": "08db2c4a0b7bee9524bc57f0b8b3e27e",
+    "mtime": 1794069375.0441413,
+    "seen": 1794069380.658312,
+    "ast_hash": "f950f45331cb11b0a0b44a92061d8fe0",
     "semantic_hash": ""
   },
   "index.html": {
@@ -63,6 +63,18 @@
     "mtime": 1794068526.5747633,
     "seen": 1794068539.5314949,
     "ast_hash": "a4981c6d13a705d0f486e26eb8286e7c",
+    "semantic_hash": ""
+  },
+  "docs/screenshots/motion-settings.jpg": {
+    "mtime": 1794069082.7774045,
+    "seen": 1794069380.6583233,
+    "ast_hash": "cec973d044443f5a0edda9e06698fa8a",
+    "semantic_hash": ""
+  },
+  "docs/screenshots/seamless-interior.jpg": {
+    "mtime": 1794069355.3485658,
+    "seen": 1794069380.6583252,
+    "ast_hash": "be802d140d3370f4e685c9f835173348",
     "semantic_hash": ""
   },
   "package-lock.json": {

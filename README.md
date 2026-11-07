@@ -63,3 +63,7 @@ The destination GLB loads before camera movement. The camera approaches the sele
 ## Motion preference
 
 Use the header's Tour motion selector. System follows the device motion preference. Animated tour enables the complete camera journey, including on a device requesting reduced motion. Reduced motion uses a gentle 180 ms fade and skips camera travel. Your selection is saved in this browser and survives reloads.
+
+## Continuous scene dissolve
+
+Window entry accelerates toward the glass, then dissolves a captured exterior frame directly into the moving interior over 420 ms. The interior camera starts immediately during that dissolve. Return uses the same handoff. Destination shaders are prepared before travel, and the outgoing model is released after the transition. Reduced motion uses a 240 ms scene dissolve without camera travel. The outgoing capture is copied directly between canvases, avoiding image encoding at the handoff.
