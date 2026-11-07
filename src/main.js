@@ -46,7 +46,7 @@ function setCamera(animated = true) {
   destination = new THREE.Vector3(...view.position);
   focus = new THREE.Vector3(...view.target);
   if (mode === 'exterior') {
-    if (narrow()) { destination.multiplyScalar(1.45); focus.y += 2; }
+    if (narrow()) { destination.multiplyScalar(1.9); focus.y += 5; }
     else focus.x -= 3.5;
   }
   controls.minDistance = mode === 'interior' ? .8 : 10;
@@ -122,7 +122,7 @@ async function selectProperty(id) {
       return button;
     }));
     await loadView('exterior', false);
-  } catch (error) { status('Unable to load residence details. Choose another residence or retry.'); $('#retry').hidden = false; $('#retry').onclick = () => selectProperty(id); console.error(error); }
+  } catch (error) { if (token !== propertyRequest) return; status('Unable to load residence details. Choose another residence or retry.'); $('#retry').hidden = false; $('#retry').onclick = () => selectProperty(id); console.error(error); }
 }
 try {
   renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });

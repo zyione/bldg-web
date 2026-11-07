@@ -33,7 +33,7 @@ function exterior(alternate) {
   for(let y=0;y<=levels;y++) box(g,[width+.3,.18,5.3],[0,y*1.4,0],stone);
   for(let x=0;x<=columns;x++) {
     box(g,[.2,levels*1.4,5.3],[-width/2+x*1.5,levels*.7,0],stone);
-    for(let y=0;y<levels;y++) {
+    for(let y=0;x<columns && y<levels;y++) {
       box(g,[.06,1.2,.08],[-width/2+x*1.5+.75,y*1.4+.7,2.67],dark);
     }
   }
