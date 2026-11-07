@@ -54,7 +54,7 @@ The supplied assets are stylized architectural models. The TikTok's photorealist
 
 ## Interactive windows
 
-Hover a marked front window to highlight its entry area and reveal the room label. Click the window or its arrow to enter. Touch users tap the arrow, and keyboard users can Tab to it and press Enter. Dragging the model does not activate a window. Both demo entry points currently lead to the same living/dining room.
+Hover a marked front window to highlight its entry area and reveal the room label. Hold the mouse over its glass or arrow for 650 ms to enter. Moving away cancels entry. Clicking also enters immediately. Touch users tap the arrow, and keyboard users can Tab to it and press Enter. Dragging the model does not activate a window. Both demo entry points currently lead to the same living/dining room.
 
 Each property's optional `entries` array defines window hotspots. Existing properties without entries retain the standard Interior button. Each entry contains a unique `id`, a `label`, a linked `room` ID, a world-coordinate `position`, positive box `size`, an exterior `approach` camera, and an `interiorEntry` camera. Cameras each contain `position` and `target` vectors. Place the interaction box slightly ahead of the window surface. Entry buttons are projected from the model coordinates and hidden when occluded by the building.
 

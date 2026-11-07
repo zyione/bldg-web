@@ -39,6 +39,15 @@ async function fade(visible) {
   veil.style.opacity = visible ? '1' : '0';
   await new Promise(resolve => setTimeout(resolve, reducedMotion.matches ? 80 : 280));
 }
+// Keep the final exterior frame against the selected glass, even for angled approaches.
+function windowThreshold(entry) {
+  const glass = new THREE.Vector3(...entry.position);
+  const outward = new THREE.Vector3(...entry.approach.position).sub(glass).normalize();
+  return {
+    position: glass.clone().addScaledVector(outward, .22).toArray(),
+    target: glass.clone().addScaledVector(outward, -1).toArray(),
+  };
+}
 function enterWindow(entry) {
   if (busy || transitioning) return;
   $('#room').value = entry.room;
@@ -128,7 +137,7 @@ async function loadView(nextMode, animate = true, entry = null) {
       }
       windowEntries?.dispose(); windowEntries = null;
       if (!reducedMotion.matches) {
-        const approach = entering ? entry.approach : activeEntry.interiorEntry;
+        const approach = entering ? windowThreshold(entry) : activeEntry.interiorEntry;
         await cameraTween(approach.position, approach.target, 1050);
       }
       await fade(true);
@@ -147,7 +156,7 @@ async function loadView(nextMode, animate = true, entry = null) {
     setCamera(animate);
     if (transition) {
       moving = false;
-      const start = entering ? entry.interiorEntry : activeEntry.approach;
+      const start = entering ? entry.interiorEntry : windowThreshold(activeEntry);
       camera.position.fromArray(start.position); controls.target.fromArray(start.target);
       controls.minDistance = .1; controls.maxDistance = 100;
       controls.update();
