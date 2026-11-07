@@ -56,5 +56,85 @@
         "Wood": "#5c4030"
       }
     }
+  ],
+  "entries": [
+    {
+      "id": "window-0",
+      "label": "Explore living & dining",
+      "room": "living",
+      "position": [
+        -0.75,
+        3.5,
+        2.78
+      ],
+      "size": [
+        1.25,
+        1.05,
+        0.25
+      ],
+      "approach": {
+        "position": [
+          -0.75,
+          3.5,
+          4.6
+        ],
+        "target": [
+          -0.75,
+          3.5,
+          2.5
+        ]
+      },
+      "interiorEntry": {
+        "position": [
+          0,
+          1.7,
+          4.1
+        ],
+        "target": [
+          0,
+          1.4,
+          -2
+        ]
+      }
+    },
+    {
+      "id": "window-1",
+      "label": "Explore living & dining",
+      "room": "living",
+      "position": [
+        2.25,
+        4.9,
+        2.78
+      ],
+      "size": [
+        1.25,
+        1.05,
+        0.25
+      ],
+      "approach": {
+        "position": [
+          2.25,
+          4.9,
+          4.6
+        ],
+        "target": [
+          2.25,
+          4.9,
+          2.5
+        ]
+      },
+      "interiorEntry": {
+        "position": [
+          0,
+          1.7,
+          4.1
+        ],
+        "target": [
+          0,
+          1.4,
+          -2
+        ]
+      }
+    }
   ]
 }

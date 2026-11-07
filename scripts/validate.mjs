@@ -9,6 +9,15 @@ for (const id of ids) {
   const p = await read(`${id}/property.json`);
   assert(p.id === id && p.name && p.rooms?.length && p.finishes?.length, `Incomplete property ${id}`);
   assert(new Set(p.rooms.map(r => r.id)).size === p.rooms.length, `Duplicate room IDs in ${id}`);
+  const entries = p.entries || [];
+  assert(new Set(entries.map(entry => entry.id)).size === entries.length, `Duplicate window IDs in ${id}`);
+  for (const entry of entries) {
+    assert(entry.id && entry.label && p.rooms.some(room => room.id === entry.room), `Invalid window room in ${id}`);
+    for (const vector of [entry.position, entry.size, entry.approach?.position, entry.approach?.target, entry.interiorEntry?.position, entry.interiorEntry?.target]) {
+      assert(vector?.length === 3 && vector.every(Number.isFinite), `Invalid window coordinates in ${id}`);
+    }
+    assert(entry.size.every(value => value > 0), `Window dimensions must be positive in ${id}`);
+  }
   for (const view of [p, ...p.rooms]) {
     for (const key of ['position', 'target']) assert(view.camera?.[key]?.length === 3 && view.camera[key].every(Number.isFinite), `Invalid camera in ${id}`);
   }

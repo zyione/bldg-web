@@ -2,6 +2,7 @@ import './style.css';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { createWindowEntries } from './windows.js';
 
 const $ = selector => document.querySelector(selector);
 const scene = new THREE.Scene();
@@ -9,6 +10,40 @@ const camera = new THREE.PerspectiveCamera(38, innerWidth / innerHeight, .05, 18
 const loader = new GLTFLoader();
 let renderer, controls, currentModel, property, mode = 'exterior', requestId = 0;
 let moving = false, destination, focus, finishIndex = 0, busy = false;
+let windowEntries, exteriorView, activeEntry, transitioning = false;
+const entryContainer = document.createElement('div');
+entryContainer.id = 'window-entries';
+document.body.append(entryContainer);
+const veil = document.createElement('div');
+veil.id = 'tour-veil'; veil.setAttribute('aria-hidden', 'true');
+document.body.append(veil);
+function cameraTween(position, target, duration) {
+  const startPosition = camera.position.clone();
+  const startTarget = controls.target.clone();
+  moving = false;
+  return new Promise(resolve => {
+    const start = performance.now();
+    function tick(now) {
+      const t = Math.min((now - start) / duration, 1);
+      const eased = t * t * (3 - 2 * t);
+      camera.position.lerpVectors(startPosition, new THREE.Vector3(...position), eased);
+      controls.target.lerpVectors(startTarget, new THREE.Vector3(...target), eased);
+      controls.update();
+      if (t < 1) requestAnimationFrame(tick);
+      else resolve();
+    }
+    requestAnimationFrame(tick);
+  });
+}
+async function fade(visible) {
+  veil.style.opacity = visible ? '1' : '0';
+  await new Promise(resolve => setTimeout(resolve, reducedMotion.matches ? 80 : 280));
+}
+function enterWindow(entry) {
+  if (busy || transitioning) return;
+  $('#room').value = entry.room;
+  loadView('interior', true, entry);
+}
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 const narrow = () => innerWidth < 760;
 const status = text => { $('#status').textContent = text; };
@@ -65,10 +100,15 @@ function applyFinish() {
   $('#finishes').querySelectorAll('button').forEach((button, index) => button.setAttribute('aria-pressed', String(index === finishIndex)));
   $('.palette-note').textContent = finish.name;
 }
-async function loadView(nextMode, animate = true) {
-  if (!property || !renderer) return;
+async function loadView(nextMode, animate = true, entry = null) {
+  if (!property || !renderer || transitioning) return;
+  if (nextMode === 'interior' && mode === 'exterior') entry ||= property.entries?.find(item => item.room === $('#room').value);
+  const entering = nextMode === 'interior' && mode === 'exterior' && entry;
+  const returning = nextMode === 'exterior' && mode === 'interior' && exteriorView;
+  const transition = Boolean(animate && (entering || returning));
   const token = ++requestId;
   busy = true;
+  entryContainer.querySelectorAll('button').forEach(button => { button.disabled = true; });
   $('#retry').hidden = true;
   status(nextMode === 'interior' ? 'Opening your space…' : 'Preparing the residence…');
   const room = property.rooms.find(item => item.id === $('#room').value) || property.rooms[0];
@@ -76,6 +116,24 @@ async function loadView(nextMode, animate = true) {
   try {
     const result = await loader.loadAsync(`/properties/${property.id}/${file}`);
     if (token !== requestId) { dispose(result.scene); return; }
+    if (transition) {
+      transitioning = true;
+      document.querySelectorAll('button, select').forEach(element => { element.disabled = true; });
+      controls.enabled = false;
+      controls.minDistance = .1; controls.maxDistance = 100;
+      document.body.classList.add('tour-transitioning');
+      if (entering) {
+        exteriorView = { position: camera.position.toArray(), target: controls.target.toArray() };
+        activeEntry = entry;
+      }
+      windowEntries?.dispose(); windowEntries = null;
+      if (!reducedMotion.matches) {
+        const approach = entering ? entry.approach : activeEntry.interiorEntry;
+        await cameraTween(approach.position, approach.target, 1050);
+      }
+      await fade(true);
+    }
+    windowEntries?.dispose(); windowEntries = null;
     if (currentModel) { scene.remove(currentModel); dispose(currentModel); }
     currentModel = result.scene;
     currentModel.traverse(object => { if (object.isMesh) { object.castShadow = true; object.receiveShadow = true; } });
@@ -87,6 +145,21 @@ async function loadView(nextMode, animate = true) {
     for (const id of ['interior', 'interiorNav']) $(`#${id}`).classList.toggle('active', mode === 'interior');
     applyFinish();
     setCamera(animate);
+    if (transition) {
+      moving = false;
+      const start = entering ? entry.interiorEntry : activeEntry.approach;
+      camera.position.fromArray(start.position); controls.target.fromArray(start.target);
+      controls.minDistance = .1; controls.maxDistance = 100;
+      controls.update();
+      await fade(false);
+      const end = entering ? room.camera : exteriorView;
+      await cameraTween(end.position, end.target, reducedMotion.matches ? 1 : 950);
+      controls.minDistance = mode === 'interior' ? .8 : 10;
+      controls.maxDistance = mode === 'interior' ? 12 : 65;
+      if (returning) { exteriorView = null; activeEntry = null; }
+    }
+    if (mode === 'exterior') windowEntries = createWindowEntries(scene, camera, renderer, currentModel, property.entries || [], enterWindow);
+    $('#exterior').textContent = mode === 'interior' ? 'Back outside' : 'Exterior';
     status('');
   } catch (error) {
     if (token !== requestId) return;
@@ -94,7 +167,16 @@ async function loadView(nextMode, animate = true) {
     $('#retry').hidden = false;
     $('#retry').onclick = () => loadView(nextMode);
     console.error(error);
-  } finally { if (token === requestId) busy = false; }
+  } finally {
+    if (token === requestId) busy = false;
+    if (token === requestId) entryContainer.querySelectorAll('button').forEach(button => { button.disabled = false; });
+    if (transitioning) {
+      transitioning = false; controls.enabled = true;
+      document.querySelectorAll('button, select').forEach(element => { element.disabled = false; });
+      document.body.classList.remove('tour-transitioning'); veil.style.opacity = '0';
+      $('#exterior').focus({ preventScroll: true });
+    }
+  }
 }
 async function readJSON(path) {
   const response = await fetch(path);
@@ -103,6 +185,8 @@ async function readJSON(path) {
 }
 let propertyRequest = 0;
 async function selectProperty(id) {
+  if (transitioning) return;
+  windowEntries?.dispose(); windowEntries = null;
   const token = ++propertyRequest;
   ++requestId;
   status('Loading residence…');
@@ -110,6 +194,7 @@ async function selectProperty(id) {
     const next = await readJSON(`/properties/${id}/property.json`);
     if (token !== propertyRequest) return;
     property = next;
+    exteriorView = null; activeEntry = null;
     finishIndex = 0;
     $('#description').textContent = property.description;
     $('#location').textContent = property.location;
@@ -152,7 +237,7 @@ try {
       camera.position.lerp(destination, blend); controls.target.lerp(focus, blend);
       if (camera.position.distanceTo(destination) < .015) moving = false;
     }
-    controls.update(); renderer.render(scene, camera);
+    controls.update(); windowEntries?.update(); renderer.render(scene, camera);
   });
   renderer.domElement.addEventListener('webglcontextlost', event => { event.preventDefault(); status('The 3D view was interrupted. Reload to restore it.'); $('#retry').hidden = false; $('#retry').textContent = 'Reload view'; $('#retry').onclick = () => location.reload(); });
   const ids = await readJSON('/properties/index.json');
@@ -162,7 +247,7 @@ try {
 } catch (error) { status(''); $('#fallback').hidden = false; console.error(error); }
 for (const id of ['enter', 'explore', 'interior', 'interiorNav']) $(`#${id}`).onclick = () => loadView('interior');
 for (const id of ['exterior', 'overview']) $(`#${id}`).onclick = () => loadView('exterior');
-$('#reset').onclick = () => { if (property && controls) setCamera(); };
+$('#reset').onclick = () => { if (property && controls && !transitioning) setCamera(); };
 $('#property').onchange = event => selectProperty(event.target.value);
 $('#room').onchange = () => loadView('interior');
 let lastWheel = 0;
@@ -175,5 +260,5 @@ renderer?.domElement.addEventListener('wheel', event => {
 addEventListener('resize', () => {
   if (!renderer) return;
   camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight);
-  if (property) setCamera(false);
+  if (property && !transitioning) setCamera(false);
 });

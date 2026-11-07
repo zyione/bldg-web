@@ -51,3 +51,11 @@ For renamed floor materials, inspect `applyFinish` in `src/main.js`, each affect
 The production build validates both properties, GLB headers, camera vectors, unique IDs, finish colours and material bindings. Browser checks covered exterior/interior navigation, property replacement and finish controls, plus light and dark themes.
 
 The supplied assets are stylized architectural models. The TikTok's photorealistic detailing and exact camera sequence are not reproduced. The tour switches between separate exterior and interior scenes with camera interpolation. Interior layout editing happens in the model source, while the interface provides finish presets. A WebGL failure currently shows a recovery message rather than a rendered image gallery. GLB load failures preserve the previous scene and offer retry. Mobile performance still depends on imported asset complexity and the device GPU.
+
+## Interactive windows
+
+Hover a marked front window to highlight its entry area and reveal the room label. Click the window or its arrow to enter. Touch users tap the arrow, and keyboard users can Tab to it and press Enter. Dragging the model does not activate a window. Both demo entry points currently lead to the same living/dining room.
+
+Each property's optional `entries` array defines window hotspots. Existing properties without entries retain the standard Interior button. Each entry contains a unique `id`, a `label`, a linked `room` ID, a world-coordinate `position`, positive box `size`, an exterior `approach` camera, and an `interiorEntry` camera. Cameras each contain `position` and `target` vectors. Place the interaction box slightly ahead of the window surface. Entry buttons are projected from the model coordinates and hidden when occluded by the building.
+
+The destination GLB loads before camera movement. The camera approaches the selected window, fades between the separate models, then settles into the configured room view. Back outside reverses the sequence and restores the exterior angle before entry. Controls are locked during the transition, and reduced-motion mode uses a short fade. A failed load preserves the current scene and allows retry.

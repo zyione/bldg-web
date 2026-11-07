@@ -6,33 +6,63 @@
     "semantic_hash": ""
   },
   "scripts/generate-models.mjs": {
-    "mtime": 1794068019.5804024,
-    "seen": 1794068025.9138288,
-    "ast_hash": "5ddaf7730eb01555c0aa8539b9e7ffce",
+    "mtime": 1794068344.67921,
+    "seen": 1794068403.1354012,
+    "ast_hash": "908fe84ffc6f99b2e7b01fc66f2c39c5",
     "semantic_hash": ""
   },
   "scripts/validate.mjs": {
-    "mtime": 1794067886.3018215,
-    "seen": 1794067978.9180725,
-    "ast_hash": "1e15a48e20e37e08bbdb7c623a57a969",
+    "mtime": 1794068379.3098474,
+    "seen": 1794068403.1354055,
+    "ast_hash": "a0492d2a472ab2f799e17892fdfdc85a",
     "semantic_hash": ""
   },
   "src/main.js": {
-    "mtime": 1794068019.5814047,
-    "seen": 1794068025.9138358,
-    "ast_hash": "a5609a9009ddfa5632451823b1c726ba",
+    "mtime": 1794068497.4318714,
+    "seen": 1794068539.531478,
+    "ast_hash": "b97945973dc55a052672ed57fd095fef",
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1794068019.5824041,
-    "seen": 1794068025.9138384,
-    "ast_hash": "32053d497c94ee4cdbd3ef5bd9e3b8d6",
+    "mtime": 1794068398.3214004,
+    "seen": 1794068403.1354125,
+    "ast_hash": "e27bece4dcc17c68250dcf8b9aaeade4",
     "semantic_hash": ""
   },
   "index.html": {
     "mtime": 1794067814.0337787,
     "seen": 1794067978.9180784,
     "ast_hash": "6470c273e581fe0eeaebfd0fffdad776",
+    "semantic_hash": ""
+  },
+  "src/windows.js": {
+    "mtime": 1794068321.4887273,
+    "seen": 1794068403.1354105,
+    "ast_hash": "3ecbad84331dab0ebcee4b95f499b016",
+    "semantic_hash": ""
+  },
+  "docs/screenshots/exterior.jpg": {
+    "mtime": 1794068056.8668933,
+    "seen": 1794068403.1354175,
+    "ast_hash": "d986cbdb091a2173c747256c6cad17c3",
+    "semantic_hash": ""
+  },
+  "docs/screenshots/interior.jpg": {
+    "mtime": 1794068065.0927095,
+    "seen": 1794068403.1354191,
+    "ast_hash": "ce7bf586debdb70cf6dc89523428bf5c",
+    "semantic_hash": ""
+  },
+  "docs/screenshots/mobile.jpg": {
+    "mtime": 1794068073.977152,
+    "seen": 1794068403.1354213,
+    "ast_hash": "520439b08ebfe15261d018a39673f975",
+    "semantic_hash": ""
+  },
+  "docs/screenshots/window-entries.jpg": {
+    "mtime": 1794068526.5747633,
+    "seen": 1794068539.5314949,
+    "ast_hash": "a4981c6d13a705d0f486e26eb8286e7c",
     "semantic_hash": ""
   },
   "package-lock.json": {
