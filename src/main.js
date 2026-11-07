@@ -36,8 +36,14 @@ function cameraTween(position, target, duration) {
   });
 }
 async function fade(visible) {
-  veil.style.opacity = visible ? '1' : '0';
-  await new Promise(resolve => setTimeout(resolve, reducedMotion.matches ? 80 : 280));
+  const opacity = visible ? '1' : '0';
+  const animation = veil.animate(
+    [{ opacity: getComputedStyle(veil).opacity }, { opacity }],
+    { duration: reduceMotion() ? 180 : 280, easing: 'ease-in-out', fill: 'forwards' },
+  );
+  await animation.finished;
+  veil.style.opacity = opacity;
+  animation.cancel();
 }
 // Keep the final exterior frame against the selected glass, even for angled approaches.
 function windowThreshold(entry) {
@@ -54,6 +60,21 @@ function enterWindow(entry) {
   loadView('interior', true, entry);
 }
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+let motionPreference = 'system';
+try { motionPreference = localStorage.getItem('arc-motion') || 'system'; } catch {}
+if (!['system', 'full', 'reduced'].includes(motionPreference)) motionPreference = 'system';
+const reduceMotion = () => motionPreference === 'reduced' || (motionPreference === 'system' && reducedMotion.matches);
+function applyMotion() {
+  document.documentElement.dataset.motion = reduceMotion() ? 'reduced' : 'full';
+}
+$('#motion').value = motionPreference;
+$('#motion').addEventListener('change', event => {
+  motionPreference = event.target.value;
+  try { localStorage.setItem('arc-motion', motionPreference); } catch {}
+  applyMotion();
+});
+reducedMotion.addEventListener('change', applyMotion);
+applyMotion();
 const narrow = () => innerWidth < 760;
 const status = text => { $('#status').textContent = text; };
 const themeMedia = matchMedia('(prefers-color-scheme: dark)');
@@ -96,7 +117,7 @@ function setCamera(animated = true) {
   controls.minDistance = mode === 'interior' ? .8 : 10;
   controls.maxDistance = mode === 'interior' ? 12 : 65;
   controls.maxPolarAngle = Math.PI * .49;
-  moving = animated && !reducedMotion.matches;
+  moving = animated && !reduceMotion();
   if (!moving) { camera.position.copy(destination); controls.target.copy(focus); controls.update(); }
 }
 function applyFinish() {
@@ -136,7 +157,7 @@ async function loadView(nextMode, animate = true, entry = null) {
         activeEntry = entry;
       }
       windowEntries?.dispose(); windowEntries = null;
-      if (!reducedMotion.matches) {
+      if (!reduceMotion()) {
         const approach = entering ? windowThreshold(entry) : activeEntry.interiorEntry;
         await cameraTween(approach.position, approach.target, 1050);
       }
@@ -162,7 +183,7 @@ async function loadView(nextMode, animate = true, entry = null) {
       controls.update();
       await fade(false);
       const end = entering ? room.camera : exteriorView;
-      await cameraTween(end.position, end.target, reducedMotion.matches ? 1 : 950);
+      await cameraTween(end.position, end.target, reduceMotion() ? 1 : 950);
       controls.minDistance = mode === 'interior' ? .8 : 10;
       controls.maxDistance = mode === 'interior' ? 12 : 65;
       if (returning) { exteriorView = null; activeEntry = null; }

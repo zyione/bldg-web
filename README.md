@@ -59,3 +59,7 @@ Hover a marked front window to highlight its entry area and reveal the room labe
 Each property's optional `entries` array defines window hotspots. Existing properties without entries retain the standard Interior button. Each entry contains a unique `id`, a `label`, a linked `room` ID, a world-coordinate `position`, positive box `size`, an exterior `approach` camera, and an `interiorEntry` camera. Cameras each contain `position` and `target` vectors. Place the interaction box slightly ahead of the window surface. Entry buttons are projected from the model coordinates and hidden when occluded by the building.
 
 The destination GLB loads before camera movement. The camera approaches the selected window, fades between the separate models, then settles into the configured room view. Back outside reverses the sequence and restores the exterior angle before entry. Controls are locked during the transition, and reduced-motion mode uses a short fade. A failed load preserves the current scene and allows retry.
+
+## Motion preference
+
+Use the header's Tour motion selector. System follows the device motion preference. Animated tour enables the complete camera journey, including on a device requesting reduced motion. Reduced motion uses a gentle 180 ms fade and skips camera travel. Your selection is saved in this browser and survives reloads.
