@@ -1,8 +1,8 @@
 {
   "package.json": {
-    "mtime": 1794067705.3228989,
-    "seen": 1794067978.918063,
-    "ast_hash": "e991d71caaae30fe6df8271a6815fc17",
+    "mtime": 1794070845.2733264,
+    "seen": 1794070926.7974727,
+    "ast_hash": "47cb15f7fb58a545fafa511717e008b0",
     "semantic_hash": ""
   },
   "scripts/generate-models.mjs": {
@@ -18,21 +18,21 @@
     "semantic_hash": ""
   },
   "src/main.js": {
-    "mtime": 1794069506.2156477,
-    "seen": 1794069524.5554352,
-    "ast_hash": "1a262995bd81453cdd16f86c1a02cae5",
+    "mtime": 1794070907.0435698,
+    "seen": 1794070926.7974918,
+    "ast_hash": "ba318bc0715e9894a5bf01a3085630fa",
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1794069375.0441413,
-    "seen": 1794069380.658312,
-    "ast_hash": "f950f45331cb11b0a0b44a92061d8fe0",
+    "mtime": 1794070865.0027876,
+    "seen": 1794070926.797496,
+    "ast_hash": "f45e8de527e190862953f41e71fd10ef",
     "semantic_hash": ""
   },
   "index.html": {
-    "mtime": 1794069013.2989075,
-    "seen": 1794069050.3442175,
-    "ast_hash": "9e26fec29cd70a9dda07912157ef3960",
+    "mtime": 1794070718.5198736,
+    "seen": 1794070926.7974982,
+    "ast_hash": "8bfaa3cd07537a2b14aa9bb8543594af",
     "semantic_hash": ""
   },
   "src/windows.js": {
@@ -83,10 +83,34 @@
     "ast_hash": "96d4f98192c0ba380ebdbbb568d2aa73",
     "semantic_hash": ""
   },
+  "scripts/convert-suburban.cjs": {
+    "mtime": 1794070906.935595,
+    "seen": 1794070926.7974796,
+    "ast_hash": "f02073f5b726756fd1b0cd6b298abab1",
+    "semantic_hash": ""
+  },
+  "docs/screenshots/suburban-bedroom.jpg": {
+    "mtime": 1794070896.7120302,
+    "seen": 1794070926.7975137,
+    "ast_hash": "d403a2a716e98fcd087f3c36972a7ae6",
+    "semantic_hash": ""
+  },
+  "docs/screenshots/suburban-exterior.jpg": {
+    "mtime": 1794070877.1203973,
+    "seen": 1794070926.7975159,
+    "ast_hash": "385a954e7d6406f3a29519b78652c947",
+    "semantic_hash": ""
+  },
+  "docs/screenshots/suburban-living.jpg": {
+    "mtime": 1794070903.4673443,
+    "seen": 1794070926.7975173,
+    "ast_hash": "736ed4193fd14652a5d3bdbd47953f5a",
+    "semantic_hash": ""
+  },
   "package-lock.json": {
-    "mtime": 1794067716.4607184,
-    "seen": 1794067978.9180803,
-    "ast_hash": "7554bd44f574f5b24d656201bd4b87b2",
+    "mtime": 1794070845.2874095,
+    "seen": 1794070926.7975214,
+    "ast_hash": "aa23a8acdbeffc1887ccd1bd1ce87538",
     "semantic_hash": ""
   }
 }

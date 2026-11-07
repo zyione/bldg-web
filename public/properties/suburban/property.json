@@ -1,0 +1,136 @@
+{
+  "id": "suburban",
+  "name": "Suburban House",
+  "location": "Furnished family home",
+  "description": "Room to settle in. Space to make your own.",
+  "exterior": "house.glb",
+  "camera": {
+    "position": [
+      30,
+      16,
+      22
+    ],
+    "target": [
+      8,
+      3,
+      -8
+    ],
+    "maxDistance": 140
+  },
+  "rooms": [
+    {
+      "id": "front-bedroom",
+      "name": "Front bedroom",
+      "model": "house.glb",
+      "camera": {
+        "position": [
+          6.8,
+          4.9,
+          -1.8
+        ],
+        "target": [
+          4.7,
+          4.1,
+          -3.3
+        ],
+        "fov": 55
+      }
+    },
+    {
+      "id": "living",
+      "name": "Living room & fireplace",
+      "model": "house.glb",
+      "camera": {
+        "position": [
+          8,
+          1.65,
+          -12
+        ],
+        "target": [
+          9,
+          1.1,
+          -15
+        ],
+        "fov": 55
+      }
+    },
+    {
+      "id": "primary-bedroom",
+      "name": "Primary bedroom",
+      "model": "house.glb",
+      "camera": {
+        "position": [
+          8,
+          4.8,
+          -10.8
+        ],
+        "target": [
+          5.8,
+          4,
+          -13.5
+        ],
+        "fov": 55
+      }
+    }
+  ],
+  "entries": [
+    {
+      "id": "bedroom-front",
+      "label": "Explore front bedroom",
+      "room": "front-bedroom",
+      "position": [
+        5.3,
+        5.5,
+        -1.02
+      ],
+      "size": [
+        1.3,
+        1.6,
+        0.35
+      ],
+      "approach": {
+        "position": [
+          5.3,
+          5.5,
+          2
+        ],
+        "target": [
+          5.3,
+          5.5,
+          -1.2
+        ]
+      },
+      "interiorEntry": {
+        "position": [
+          5.3,
+          4.9,
+          -1.7
+        ],
+        "target": [
+          4.7,
+          4.1,
+          -3.3
+        ]
+      }
+    }
+  ],
+  "finishes": [
+    {
+      "name": "Original finishes",
+      "swatch": "#b49b7a",
+      "materials": {}
+    },
+    {
+      "name": "Warm accents",
+      "swatch": "#94704b",
+      "materials": {
+        "Surface_44": "#c5a57d",
+        "Surface_13": "#dec9aa"
+      }
+    }
+  ],
+  "credits": {
+    "label": "Model credits",
+    "url": "https://3dwarehouse.sketchup.com/model/9fe011b10a23360130cc6a22545b390a/Contemporary-Suburban-House-Fully-Furnished"
+  }
+}

@@ -8,3 +8,5 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;background:li
 html[data-motion=reduced] .window-entry.entering::after{animation:none}
 
 #motion{font-size:12px;max-width:145px}.motion-label{display:flex;align-items:center}@media(max-width:760px){.header-actions{gap:10px}#motion,#theme{font-size:10px}#motion{max-width:120px}}
+
+#model-credit{display:block;margin-top:10px;text-decoration:underline}

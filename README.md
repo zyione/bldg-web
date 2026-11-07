@@ -67,3 +67,12 @@ Use the header's Tour motion selector. System follows the device motion preferen
 ## Continuous scene dissolve
 
 Window entry accelerates toward the glass, then dissolves a captured exterior frame directly into the moving interior over 420 ms. The interior camera starts immediately during that dissolve. Return uses the same handoff. Destination shaders are prepared before travel, and the outgoing model is released after the transition. Reduced motion uses a 240 ms scene dissolve without camera travel. The outgoing capture is copied directly between canvases, avoiding image encoding at the handoff.
+
+
+## Imported Suburban House
+
+Select Suburban House in Featured Residence. Its upstairs front-window marker enters the actual front bedroom. The room selector also opens Living room & fireplace and Primary bedroom. The complete house GLB is shared between views, with textures and source furnishings preserved. Model credits are linked from the property card.
+
+The original user-provided SKP remains local and is ignored by Git. After npm ci, reproduce conversion with node scripts/convert-suburban.cjs "path/to/model.skp". Camera/entry configuration is in public/properties/suburban/property.json. Imported materials have stable Surface_N names. Original finishes restores the untinted source palette. The warm preset tints selected materials while preserving textures.
+
+The visual detail reflects this 2014 source model. The viewer provides configured room views and orbiting. Collision-aware walking is not implemented.

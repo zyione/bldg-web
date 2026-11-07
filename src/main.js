@@ -114,14 +114,15 @@ function dispose(model) {
 function setCamera(animated = true) {
   const room = property.rooms.find(item => item.id === $('#room').value) || property.rooms[0];
   const view = mode === 'interior' ? room.camera : property.camera;
+  camera.fov = view.fov || 38; camera.updateProjectionMatrix();
   destination = new THREE.Vector3(...view.position);
   focus = new THREE.Vector3(...view.target);
   if (mode === 'exterior') {
-    if (narrow()) { destination.multiplyScalar(1.9); focus.y += 5; }
+    if (narrow()) { destination.sub(focus).multiplyScalar(1.9).add(focus); focus.y += 5; }
     else focus.x -= 3.5;
   }
   controls.minDistance = mode === 'interior' ? .8 : 10;
-  controls.maxDistance = mode === 'interior' ? 12 : 65;
+  controls.maxDistance = mode === 'interior' ? 12 : (property.camera.maxDistance || 65);
   controls.maxPolarAngle = Math.PI * .49;
   moving = animated && !reduceMotion();
   if (!moving) { camera.position.copy(destination); controls.target.copy(focus); controls.update(); }
@@ -131,7 +132,11 @@ function applyFinish() {
   const finish = property.finishes[finishIndex];
   currentModel.traverse(object => {
     const materials = object.material ? (Array.isArray(object.material) ? object.material : [object.material]) : [];
-    for (const material of materials) if (finish.materials[material.name]) material.color.set(finish.materials[material.name]);
+    for (const material of materials) {
+      material.userData.originalColor ||= material.color.clone();
+      material.color.copy(material.userData.originalColor);
+      if (finish.materials[material.name]) material.color.set(finish.materials[material.name]);
+    }
   });
   $('#finishes').querySelectorAll('button').forEach((button, index) => button.setAttribute('aria-pressed', String(index === finishIndex)));
   $('.palette-note').textContent = finish.name;
@@ -151,12 +156,14 @@ async function loadView(nextMode, animate = true, entry = null) {
   const file = nextMode === 'interior' ? room.model : property.exterior;
   let previousModel;
   try {
-    const result = await loader.loadAsync(`/properties/${property.id}/${file}`);
-    if (token !== requestId) { dispose(result.scene); return; }
+    const source = `/properties/${property.id}/${file}`;
+    const reuseModel = currentModel?.userData.source === source;
+    const result = reuseModel ? { scene: currentModel } : await loader.loadAsync(source);
+    if (token !== requestId) { if (!reuseModel) dispose(result.scene); return; }
     result.scene.traverse(object => { if (object.isMesh) { object.castShadow = true; object.receiveShadow = true; } });
     // Prepare shaders before the camera starts moving, including first-time room visits.
-    await renderer.compileAsync(result.scene, camera, scene);
-    if (token !== requestId) { dispose(result.scene); return; }
+    if (!reuseModel) await renderer.compileAsync(result.scene, camera, scene);
+    if (token !== requestId) { if (!reuseModel) dispose(result.scene); return; }
     if (transition) {
       transitioning = true;
       document.querySelectorAll('button, select').forEach(element => { element.disabled = true; });
@@ -181,12 +188,13 @@ async function loadView(nextMode, animate = true, entry = null) {
       veil.style.opacity = '1';
     }
     windowEntries?.dispose(); windowEntries = null;
-    if (currentModel) {
+    if (currentModel && !reuseModel) {
       scene.remove(currentModel);
       if (transition) previousModel = currentModel;
       else dispose(currentModel);
     }
     currentModel = result.scene;
+    currentModel.userData.source = source;
     currentModel.traverse(object => { if (object.isMesh) { object.castShadow = true; object.receiveShadow = true; } });
     scene.add(currentModel);
     mode = nextMode;
@@ -212,7 +220,7 @@ async function loadView(nextMode, animate = true, entry = null) {
         reduceMotion() ? Promise.resolve() : cameraTween(end.position, end.target, 950, 'out'),
       ]);
       controls.minDistance = mode === 'interior' ? .8 : 10;
-      controls.maxDistance = mode === 'interior' ? 12 : 65;
+      controls.maxDistance = mode === 'interior' ? 12 : (property.camera.maxDistance || 65);
       if (returning) { exteriorView = null; activeEntry = null; }
     }
     if (mode === 'exterior') windowEntries = createWindowEntries(scene, camera, renderer, currentModel, property.entries || [], enterWindow);
@@ -257,6 +265,8 @@ async function selectProperty(id) {
     finishIndex = 0;
     $('#description').textContent = property.description;
     $('#location').textContent = property.location;
+    $('#model-credit').hidden = !property.credits;
+    if (property.credits) { $('#model-credit').href = property.credits.url; $('#model-credit').textContent = property.credits.label; }
     $('#room').replaceChildren(...property.rooms.map(room => new Option(room.name, room.id)));
     $('#finishes').replaceChildren(...property.finishes.map((finish, index) => {
       const button = document.createElement('button');

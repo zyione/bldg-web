@@ -2,3 +2,5 @@ node_modules/
 dist/
 .graphify-venv/
 graphify-out/cache/
+
+*.skp
