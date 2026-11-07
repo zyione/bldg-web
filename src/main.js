@@ -51,12 +51,12 @@ async function fade(visible) {
   veil.style.opacity = opacity;
   animation.cancel();
 }
-// Keep the final exterior frame against the selected glass, even for angled approaches.
+// Begin the dissolve ahead of the glass so entry carries through without reaching it.
 function windowThreshold(entry) {
   const glass = new THREE.Vector3(...entry.position);
   const outward = new THREE.Vector3(...entry.approach.position).sub(glass).normalize();
   return {
-    position: glass.clone().addScaledVector(outward, .22).toArray(),
+    position: glass.clone().addScaledVector(outward, 1.4).toArray(),
     target: glass.clone().addScaledVector(outward, -1).toArray(),
   };
 }
@@ -170,7 +170,7 @@ async function loadView(nextMode, animate = true, entry = null) {
       windowEntries?.dispose(); windowEntries = null;
       if (!reduceMotion()) {
         const approach = entering ? windowThreshold(entry) : activeEntry.interiorEntry;
-        await cameraTween(approach.position, approach.target, 1050, 'in');
+        await cameraTween(approach.position, approach.target, 750, 'in');
       }
       // Dissolve the actual outgoing view directly into the moving destination.
       // Capture immediately after a render because the canvas drawing buffer is transient.

@@ -18,9 +18,9 @@
     "semantic_hash": ""
   },
   "src/main.js": {
-    "mtime": 1794069348.6941028,
-    "seen": 1794069380.6583064,
-    "ast_hash": "703183904d658abd8f89ff1ad6ae8e36",
+    "mtime": 1794069506.2156477,
+    "seen": 1794069524.5554352,
+    "ast_hash": "1a262995bd81453cdd16f86c1a02cae5",
     "semantic_hash": ""
   },
   "README.md": {
@@ -72,9 +72,15 @@
     "semantic_hash": ""
   },
   "docs/screenshots/seamless-interior.jpg": {
-    "mtime": 1794069355.3485658,
-    "seen": 1794069380.6583252,
+    "mtime": 1794069515.1408787,
+    "seen": 1794069524.5554535,
     "ast_hash": "be802d140d3370f4e685c9f835173348",
+    "semantic_hash": ""
+  },
+  "docs/screenshots/seamless-mobile.jpg": {
+    "mtime": 1794069399.1546435,
+    "seen": 1794069524.555456,
+    "ast_hash": "96d4f98192c0ba380ebdbbb568d2aa73",
     "semantic_hash": ""
   },
   "package-lock.json": {
