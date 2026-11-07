@@ -1,0 +1,60 @@
+{
+  "id": "courtyard",
+  "name": "Courtyard House",
+  "location": "A quieter kind of city living",
+  "description": "Intimate proportions. Open possibilities.",
+  "exterior": "exterior.glb",
+  "camera": {
+    "position": [
+      15,
+      9,
+      20
+    ],
+    "target": [
+      0,
+      2.5,
+      0
+    ]
+  },
+  "rooms": [
+    {
+      "id": "living",
+      "name": "Living & dining",
+      "model": "living.glb",
+      "camera": {
+        "position": [
+          3.8,
+          2.2,
+          3.9
+        ],
+        "target": [
+          -1,
+          1,
+          -2
+        ]
+      }
+    }
+  ],
+  "finishes": [
+    {
+      "name": "Natural oak",
+      "swatch": "#b89b76",
+      "materials": {
+        "Floor": "#b89b76",
+        "Walls": "#e4dfd2",
+        "Upholstery": "#ded9c9",
+        "Wood": "#94704b"
+      }
+    },
+    {
+      "name": "Warm walnut",
+      "swatch": "#725443",
+      "materials": {
+        "Floor": "#725443",
+        "Walls": "#c9b9a2",
+        "Upholstery": "#a49580",
+        "Wood": "#5c4030"
+      }
+    }
+  ]
+}
